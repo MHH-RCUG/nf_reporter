@@ -3,41 +3,39 @@ nextflow.enable.dsl = 2
 
 workflow {
     params.output_dir = "output"
-    ids = Channel.fromPath('raspir/*.csv')
+    csvs = Channel.fromPath('raspir/*.csv')
     chunksize = Channel.value(1000)
-    splits = Channel.new
-    results = Channel.new
+    split_csvs(csvs, chunksize)
+    cut_first_column(csvs, chunksize)
+    cut_first_column.out.somecrap.view()
     
-    split_ids(ids, chunksize)
-    cut_first_column(chunksize)
     
 }
 
 
 
 
-//customer_ids = Channel.from(1, 2, 3, 4)
-process split_ids {
+//customer_csvs = Channel.from(1, 2, 3, 4)
+process split_csvs {
 
     text = """
-    Just testing
-    bla
+    Just testing split csvs
     """
     println text
 
     input:
-    path(ids)
+    path(csvs)
     val(chunksize)
 
     x = new java.util.Date()
     println x
  
     output:
-    file('batch-*') of splits
+    file('batch-*')
      
     shell:
     """
-    split -l !{chunksize} !{ids} batch-
+    split -l !{chunksize} !{csvs} batch-
 
     """
 }
@@ -57,16 +55,17 @@ process cut_first_column {
     println x
 
     input:
-    file x from splits
+    file x
     val(chunksize)
 
     output:
-    stdout results
-    
+    //path "$x.txt"
+    // Named stdout pipe
+    stdout emit: somecrap
 
     shell:
     """
-    cut -f 1 -d"\t" $x   
+    cut -f 1 -d"," $x | head -n 5 
 
     """
 }
