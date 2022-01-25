@@ -3,9 +3,12 @@ Integrate metagenomic reports
 
 Authors: Colin Davenport, Lisa Hollstein
 
-## Goal: 
-- integrate multiple metagenomic reports into one table. 
+## Goal - metagenomic data integration: 
+- integrate multiple metagenomic reports into one table (preferably: haybaler ?)
+- So species found by raspir should be listed as "raspir_positive" or "raspir_negative" in the haybaler table (in a new column)
+- later, species found by krakenuniq and metaphlan should be treated simularly (new column in haybaler)
 - provide multiple views of this table for different stakeholders
+
 
 
 
