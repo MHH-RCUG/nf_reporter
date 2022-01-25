@@ -1,8 +1,8 @@
-# allows you to define processes to be used for modular libraries
+// allows you to define processes to be used for modular libraries
 nextflow.enable.dsl = 2
 
 workflow {
-    ids = Channel.fromPath('data/ids.txt')
+    ids = Channel.fromPath('raspir/*.csv')
     chunksize = Channel.value(1000)
     split_ids(ids, chunksize)
 }
