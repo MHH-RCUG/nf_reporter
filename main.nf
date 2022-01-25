@@ -2,11 +2,15 @@
 nextflow.enable.dsl = 2
 
 workflow {
+    params.output_dir = "output"
     ids = Channel.fromPath('raspir/*.csv')
     chunksize = Channel.value(1000)
+    splits = Channel.new
+    results = Channel.new
+    
     split_ids(ids, chunksize)
-    //horse_channel = Channel
-    cut_first_column = Channel
+    cut_first_column(chunksize)
+    
 }
 
 
@@ -29,9 +33,8 @@ process split_ids {
     println x
  
     output:
-    file('batch-*')
-    //file horse into horse_channel
- 
+    file('batch-*') of splits
+     
     shell:
     """
     split -l !{chunksize} !{ids} batch-
@@ -52,30 +55,40 @@ process cut_first_column {
 
     x = new java.util.Date()
     println x
- 
-    Channel
-    .of(1..23, 'X', 'Y')
-    .view()
-
-    output:
-    file('batch-*')
 
     input:
-    path(ids)
+    file x from splits
     val(chunksize)
 
-    
+    output:
+    stdout results
     
 
     shell:
     """
-    split -l !{chunksize} !{ids} batch-
+    cut -f 1 -d"\t" $x   
 
     """
 }
 
+//results.view { it.trim() } 
 
 // watchPath - script will trigger, but will never finish
 //Channel
 //   .watchPath( 'raspir/*.csv' )
 //   .subscribe { println "CSV file: $it" }
+
+process collect_files {
+    publishDir "${params.output_dir}/collect_files", mode: 'copy', overwrite: true
+
+    input:
+    file(files:"*") from sample_files.collect()
+
+    output:
+    file(files)
+
+    script:
+    """
+    """
+
+}
