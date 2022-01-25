@@ -1,4 +1,0 @@
-2022-01-25 13:23:54	-	distraught_feynman	-	cfc98e3851bd566d0061af3681f968e2	e76e198b-186f-43ce-b9bf-689b23c63423	nextflow run main.nf
-2022-01-25 13:24:11	2.6s	tiny_murdock	ERR	4358e724389aa8299b02fe453e129e82	1d83142d-3eeb-4072-b6a5-1dec7cb1b12a	nextflow run main.nf
-2022-01-25 13:25:10	2.2s	shrivelled_northcutt	OK	61febf144fca12d541d7d81a350a10d0	8df06b31-783b-457a-b543-33319b80208f	nextflow run main.nf
-2022-01-25 13:42:33	2.7s	thirsty_wright	OK	61febf144fca12d541d7d81a350a10d0	015f5044-2d34-42d2-884a-d8c329186cfe	nextflow main.nf
