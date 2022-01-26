@@ -1,5 +1,5 @@
 # nf_reporter
-Integrate metagenomic reports
+Integrate metagenomic reports.
 
 Authors: Colin Davenport, Lisa Hollstein
 
