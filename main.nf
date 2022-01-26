@@ -5,10 +5,12 @@ workflow {
     params.output_dir = "output"
     csvs = Channel.fromPath('raspir/*.csv')
     chunksize = Channel.value(1000)
+
     split_csvs(csvs, chunksize)
     cut_first_column(csvs, chunksize)
     cut_first_column.out.somecrap.view()
     
+    pandas_unique(cut_first_column.out.somecrap)
     
 }
 
@@ -41,7 +43,6 @@ process split_csvs {
 }
 
 
-//horse_channel.view()
 
 process cut_first_column {
 
@@ -70,12 +71,23 @@ process cut_first_column {
     """
 }
 
-//results.view { it.trim() } 
+process pandas_unique {
+    conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
 
-// watchPath - script will trigger, but will never finish
-//Channel
-//   .watchPath( 'raspir/*.csv' )
-//   .subscribe { println "CSV file: $it" }
+    input:
+    stdin
+
+    output:
+    stdout emit: pandascrap
+
+    shell:
+    """
+    python haybaler.py
+
+    """
+}
+
+
 
 process collect_files {
     publishDir "${params.output_dir}/collect_files", mode: 'copy', overwrite: true
