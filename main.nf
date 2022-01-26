@@ -1,23 +1,27 @@
-// allows you to define processes to be used for modular libraries
+// use modern nextflow (does not allow into or create keywords)
 nextflow.enable.dsl = 2
 
 workflow {
     params.output_dir = "output"
-    csvs = Channel.fromPath('raspir/*.csv')
+
+    // File inputs
+    raspir_csvs = Channel.fromPath('raspir/*.csv')
+    reporting_csvs = Channel.fromPath('reporting/haybaler/*.csv')
     chunksize = Channel.value(1000)
 
-    split_csvs(csvs, chunksize)
-    cut_first_column(csvs, chunksize)
+    // run processes
+    split_csvs(raspir_csvs, chunksize)
+    cut_first_column(raspir_csvs, chunksize)
     cut_first_column.out.somecrap.view()
     
-    pandas_unique(cut_first_column.out.somecrap)
-    
+    //pandas_unique(cut_first_column.out.somecrap)
+    pandas_unique(raspir_csvs, reporting_csvs)
+    pandas_unique.out.pandascrap.view()    
 }
 
 
 
 
-//customer_csvs = Channel.from(1, 2, 3, 4)
 process split_csvs {
 
     text = """
@@ -26,7 +30,7 @@ process split_csvs {
     println text
 
     input:
-    path(csvs)
+    path(raspir_csvs)
     val(chunksize)
 
     x = new java.util.Date()
@@ -37,7 +41,7 @@ process split_csvs {
      
     shell:
     """
-    split -l !{chunksize} !{csvs} batch-
+    split -l !{chunksize} !{raspir_csvs} batch-
 
     """
 }
@@ -74,18 +78,90 @@ process cut_first_column {
 process pandas_unique {
     conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
 
+    text = """
+    Read reporting and raspir files. Limit reporting rows to those rows contained in raspir output,  using pandas
+    """
+    println text
+
+
     input:
-    stdin
+    file raspir_csv
+    file reporting_csv
+
+    output:
+    stdout emit: pandascrap
+    
+    //println "Filename" $raspir_csv.getBaseName()
+    //println "Filename" $reporting_csv
+
+
+    shell:
+    """
+    echo "test"
+    python $projectDir/haybaler.py
+    """
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////
+
+
+
+process pandas_unique_BLABLABLA {
+    conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
+
+    text = """
+    Read reporting and raspir files. Limit reporting rows to those rows contained in raspir output,  using pandas .... TWO
+BLALBALLAALBALBALBLABLALABLABLABLABLAB
+    """
+    println text
+
+
+    input:
+    file raspir_csv
+    file reporting_csv
 
     output:
     stdout emit: pandascrap
 
-    shell:
-    """
-    python haybaler.py
+    script:
+    // check file names match ?
 
+    //            raspir/1_sm_R1.ndp.trm.s.mm.dup.mq30.raspir_final_stats.csv
+    //reporting/haybaler/1_sm_R1.ndp.trm.s.mm.dup.mq30.bam.txt.rep.us.csv
     """
+    println "Filename" $raspir_csv
+    println "Filename" $reporting_csv
+    
+    //r = $raspir_csv.toString()
+    //p = $reporting_csv.toString()
+    //r = $raspir_csv.startsWith()
+    //p = $reporting_csv.startsWith()
+    //if( $r.substring(0,9) =~ /$p.substring(0,9)/ ) {
+    //   println "Filename " $r " matched filename " $p
+    //}
+    """
+ /*
+    //shell:
+    //"""
+    //echo "test"
+    //#python $projectDir/haybaler.py
+    //"""
+*/
+
 }
+
 
 
 
