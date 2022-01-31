@@ -19,8 +19,8 @@ workflow {
     pandas_unique.out.pandascrap.view()    
 
     test_filenames_same(raspir_csvs, reporting_csvs)
-    //test_filenames_same.out.files_same.view()
-    test_filenames_same.out.view()    
+    test_filenames_same.out.filessame.view()
+    //test_filenames_same.out.view()    
 }
 
 
@@ -107,8 +107,8 @@ process test_filenames_same {
     file reporting_csv
 
     output:
-    //stdout emit: files_same
-    stdout
+    stdout emit: filessame
+    //stdout
 
     script:
     // check file names match ?
@@ -119,6 +119,8 @@ process test_filenames_same {
     println "Filename" $raspir_csv
     println "Filename" $reporting_csv
     
+
+    """
     //r = $raspir_csv.toString()
     //p = $reporting_csv.toString()
     //r = $raspir_csv.startsWith()
@@ -126,7 +128,6 @@ process test_filenames_same {
     //if( $r.substring(0,9) =~ /$p.substring(0,9)/ ) {
     //   println "Filename " $r " matched filename " $p
     //}
-    """
 
 
 }
