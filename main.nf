@@ -17,34 +17,14 @@ workflow {
     //pandas_unique(cut_first_column.out.somecrap)
     pandas_unique(raspir_csvs, reporting_csvs)
     pandas_unique.out.pandascrap.view()    
+
+    test_filenames_same(raspir_csvs, reporting_csvs)
+    pandas_unique.out.files_same.view()    
 }
 
 
 
 
-process split_csvs {
-
-    text = """
-    Just testing split csvs
-    """
-    println text
-
-    input:
-    path(raspir_csvs)
-    val(chunksize)
-
-    x = new java.util.Date()
-    println x
- 
-    output:
-    file('batch-*')
-     
-    shell:
-    """
-    split -l !{chunksize} !{raspir_csvs} batch-
-
-    """
-}
 
 
 
@@ -99,6 +79,7 @@ process pandas_unique {
     """
     echo "test"
     python $projectDir/haybaler.py
+
     """
 
 
@@ -107,18 +88,11 @@ process pandas_unique {
 
 
 
-
-
-
-
-
-
-
 //////////////////////////////////////////////////////
 
 
 
-process pandas_unique_BLABLABLA {
+process test_filenames_same {
     conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
 
     text = """
@@ -133,7 +107,7 @@ BLALBALLAALBALBALBLABLALABLABLABLABLAB
     file reporting_csv
 
     output:
-    stdout emit: pandascrap
+    stdout emit: files_same
 
     script:
     // check file names match ?
@@ -178,4 +152,31 @@ process collect_files {
     """
     """
 
+}
+
+
+
+
+process split_csvs {
+
+    text = """
+    Just testing split csvs
+    """
+    println text
+
+    input:
+    path(raspir_csvs)
+    val(chunksize)
+
+    x = new java.util.Date()
+    println x
+ 
+    output:
+    file('batch-*')
+     
+    shell:
+    """
+    split -l !{chunksize} !{raspir_csvs} batch-
+
+    """
 }
