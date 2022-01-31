@@ -111,15 +111,17 @@ process test_filenames_same {
     //stdout
 
     script:
-    // check file names match ?
+    // check file names match. A bash script
 
     //            raspir/1_sm_R1.ndp.trm.s.mm.dup.mq30.raspir_final_stats.csv
     //reporting/haybaler/1_sm_R1.ndp.trm.s.mm.dup.mq30.bam.txt.rep.us.csv
+    // vars do not get substituted
+    //println "Filename $raspir_csv"
+    //println "Filename $reporting_csv"
+    
     """
     echo "Filename $raspir_csv"
     echo "Filename $reporting_csv"
-    println "Filename $raspir_csv"
-    println "Filename $reporting_csv"
     
 
     """
@@ -148,6 +150,9 @@ process collect_files {
 
     script:
     """
+    /usr/bin/env python
+    print "python not bash"
+
     """
 
 }
