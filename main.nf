@@ -10,17 +10,19 @@ workflow {
     chunksize = Channel.value(1000)
 
     // run processes
-    split_csvs(raspir_csvs, chunksize)
     cut_first_column(raspir_csvs, chunksize)
     cut_first_column.out.somecrap.view()
-    
+
+    // test filenames read by nextflow from raspir and reporting have the same stem -looks good
+    test_filenames_same(raspir_csvs, reporting_csvs)
+    test_filenames_same.out.filessame.view()
+
     //pandas_unique(cut_first_column.out.somecrap)
     pandas_unique(raspir_csvs, reporting_csvs)
     pandas_unique.out.pandascrap.view()    
 
-    test_filenames_same(raspir_csvs, reporting_csvs)
-    test_filenames_same.out.filessame.view()
-    //test_filenames_same.out.view()    
+
+    //collect_files()
 }
 
 
@@ -60,6 +62,8 @@ process pandas_unique {
     conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
 
     text = """
+    Run as: nextflow run main.nf
+    Requires: python pandas library (python -m pip install --user pandas)
     Read reporting and raspir files. Limit reporting rows to those rows contained in raspir output,  using pandas
     """
     println text
@@ -78,9 +82,10 @@ process pandas_unique {
 
     shell:
     """
-    echo "test"
-    python $projectDir/haybaler.py
-
+    echo "Test - this works, pandas is found"
+    echo "Lisa can add script  with input argument 1 being raspir_csv and arg 2 being reporting_csv"
+    #python $projectDir/haybaler.py
+    # TODO Lisa to add script here
     """
 
 
@@ -108,7 +113,6 @@ process test_filenames_same {
 
     output:
     stdout emit: filessame
-    //stdout
 
     script:
     // check file names match. A bash script
@@ -125,14 +129,6 @@ process test_filenames_same {
     
 
     """
-    //r = $raspir_csv.toString()
-    //p = $reporting_csv.toString()
-    //r = $raspir_csv.startsWith()
-    //p = $reporting_csv.startsWith()
-    //if( $r.substring(0,9) =~ /$p.substring(0,9)/ ) {
-    //   println "Filename " $r " matched filename " $p
-    //}
-
 
 }
 
@@ -157,29 +153,3 @@ process collect_files {
 
 }
 
-
-
-
-process split_csvs {
-
-    text = """
-    Just testing split csvs
-    """
-    println text
-
-    input:
-    path(raspir_csvs)
-    val(chunksize)
-
-    x = new java.util.Date()
-    println x
- 
-    output:
-    file('batch-*')
-     
-    shell:
-    """
-    split -l !{chunksize} !{raspir_csvs} batch-
-
-    """
-}
