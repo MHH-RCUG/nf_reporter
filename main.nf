@@ -49,11 +49,12 @@ process cut_first_column {
     output:
     //path "$x.txt"
     // Named stdout pipe
-    //stdout emit: somecrap
+    stdout emit: somecrap
 
     shell:
     """
-    cut -f 1 -d"," $x | head -n 5 
+    #cut -f 1 -d"," $x | head -n 5
+    cut -f 1 -d"," $x | head -n 5 >/dev/null
 
     """
 }
