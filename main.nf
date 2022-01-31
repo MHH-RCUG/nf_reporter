@@ -96,8 +96,7 @@ process test_filenames_same {
     conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
 
     text = """
-    Read reporting and raspir files. Limit reporting rows to those rows contained in raspir output,  using pandas .... TWO
-BLALBALLAALBALBALBLABLALABLABLABLABLAB
+    Read reporting and raspir files. Limit reporting rows to those rows contained in raspir output,  using pandas. Filename test.
     """
     println text
 
@@ -126,13 +125,7 @@ BLALBALLAALBALBALBLABLALABLABLABLABLAB
     //   println "Filename " $r " matched filename " $p
     //}
     """
- /*
-    //shell:
-    //"""
-    //echo "test"
-    //#python $projectDir/haybaler.py
-    //"""
-*/
+
 
 }
 
