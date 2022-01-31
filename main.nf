@@ -115,11 +115,11 @@ process test_filenames_same {
 
     //            raspir/1_sm_R1.ndp.trm.s.mm.dup.mq30.raspir_final_stats.csv
     //reporting/haybaler/1_sm_R1.ndp.trm.s.mm.dup.mq30.bam.txt.rep.us.csv
-    """
+    
     println "Filename" $raspir_csv
     println "Filename" $reporting_csv
-    
-
+    """
+    echo "hmmm"
     """
     //r = $raspir_csv.toString()
     //p = $reporting_csv.toString()
