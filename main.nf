@@ -19,7 +19,7 @@ workflow {
     pandas_unique.out.pandascrap.view()    
 
     test_filenames_same(raspir_csvs, reporting_csvs)
-    pandas_unique.out.files_same.view()    
+    test_filenames_same.out.files_same.view()    
 }
 
 
