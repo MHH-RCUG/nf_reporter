@@ -12,9 +12,11 @@ Authors: Colin Davenport, Lisa Hollstein
 
 
 ## Run 
-nextflow run main.nf
+
+`nextflow run main.nf`
 
 ## Install
+
 Setup nextflow as per their website
 
 Perhaps add pandas
@@ -24,6 +26,9 @@ conda deactivate
 python -m pip --user pandas=1.2.5
 ```
 
+## Get example files
+
+`bash get_example_data.sh`
 
 
 

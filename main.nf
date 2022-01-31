@@ -64,7 +64,7 @@ process pandas_unique {
 
     text = """
     Run as: nextflow run main.nf
-    Requires: python pandas library (python -m pip install --user pandas)
+    Requires: python pandas library - see README.md
     Read reporting and raspir files. Limit reporting rows to those rows contained in raspir output,  using pandas
     """
     println text
@@ -86,7 +86,9 @@ process pandas_unique {
     echo "Test - this works, pandas is found"
     echo "Lisa can add script  with input argument 1 being raspir_csv and arg 2 being reporting_csv"
     #python $projectDir/haybaler.py
-    # TODO Lisa to add script here
+    #############################################################
+    # TODO Lisa to add comparison script here
+    ################################################################
     """
 
 
