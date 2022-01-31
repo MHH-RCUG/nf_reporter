@@ -34,7 +34,7 @@ workflow {
 process cut_first_column {
 
     text = """
-    Cut first column
+    Cut first column and print the first five lines 
     """
     println text
 
@@ -49,7 +49,7 @@ process cut_first_column {
     output:
     //path "$x.txt"
     // Named stdout pipe
-    stdout emit: somecrap
+    //stdout emit: somecrap
 
     shell:
     """
