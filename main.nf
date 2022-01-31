@@ -19,7 +19,8 @@ workflow {
     pandas_unique.out.pandascrap.view()    
 
     test_filenames_same(raspir_csvs, reporting_csvs)
-    test_filenames_same.out.files_same.view()    
+    //test_filenames_same.out.files_same.view()
+    test_filenames_same.out.view()    
 }
 
 
@@ -106,7 +107,8 @@ process test_filenames_same {
     file reporting_csv
 
     output:
-    stdout emit: files_same
+    //stdout emit: files_same
+    stdout
 
     script:
     // check file names match ?
