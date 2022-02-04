@@ -84,10 +84,10 @@ process pandas_unique {
     shell:
     """
     echo "Test - this works, pandas is found"
-    echo "Lisa can add script  with input argument 1 being raspir_csv and arg 2 being reporting_csv"
+    echo "Run script with input argument 1 being raspir_csv and arg 2 being reporting_csv"
     #python $projectDir/haybaler.py
     #############################################################
-    # TODO Lisa to add comparison script here
+    python3 $projectDir/add_raspir.py -ra $raspir_csv -re $reporting_csv -d $projectDir
     ################################################################
     """
 
