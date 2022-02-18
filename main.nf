@@ -33,15 +33,6 @@ workflow {
 
 process cut_first_column {
 
-    text = """
-    Cut first column and print the first five lines 
-    """
-    println text
-
-
-    x = new java.util.Date()
-    println x
-
     input:
     file x
     val(chunksize)
@@ -66,6 +57,7 @@ process pandas_unique {
     Run as: nextflow run main.nf
     Requires: python pandas library - see README.md
     Read reporting and raspir files. Limit reporting rows to those rows contained in raspir output,  using pandas
+    Add growth_rate data, then data from other tools.
     """
     println text
 
@@ -84,12 +76,7 @@ process pandas_unique {
 
     shell:
     """
-    echo "Test - this works, pandas is found"
-    echo "Run script with input argument 1 being raspir_csv and arg 2 being reporting_csv"
-    #python $projectDir/haybaler.py
-    #############################################################
     python3 $projectDir/add_raspir.py -ra $raspir_csv -re $reporting_csv -d $projectDir
-    ################################################################
     """
 
 
@@ -120,13 +107,6 @@ process test_filenames_same {
     stdout emit: filessame
 
     script:
-    // check file names match. A bash script
-
-    //            raspir/1_sm_R1.ndp.trm.s.mm.dup.mq30.raspir_final_stats.csv
-    //reporting/haybaler/1_sm_R1.ndp.trm.s.mm.dup.mq30.bam.txt.rep.us.csv
-    // vars do not get substituted
-    //println "Filename $raspir_csv"
-    //println "Filename $reporting_csv"
     
     """
     echo "Filename $raspir_csv"
