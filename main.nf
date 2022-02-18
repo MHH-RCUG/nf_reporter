@@ -7,6 +7,7 @@ workflow {
     // File inputs
     raspir_csvs = Channel.fromPath('raspir/*.csv')
     reporting_csvs = Channel.fromPath('reporting/haybaler/*.csv')
+    growth_rate_csvs = Channel.fromPath('growth_rate/fit_results/output/*.csv')
     chunksize = Channel.value(1000)
 
     // run processes
@@ -14,11 +15,10 @@ workflow {
     cut_first_column.out.somecrap.view()
 
     // test filenames read by nextflow from raspir and reporting have the same stem -looks good
-    test_filenames_same(raspir_csvs, reporting_csvs)
+    test_filenames_same(raspir_csvs, reporting_csvs,growth_rate_csvs)
     test_filenames_same.out.filessame.view()
 
-    //pandas_unique(cut_first_column.out.somecrap)
-    pandas_unique(raspir_csvs, reporting_csvs)
+    pandas_unique(raspir_csvs, reporting_csvs,growth_rate_csvs)
     pandas_unique.out.pandascrap.view()    
 
 
@@ -73,6 +73,7 @@ process pandas_unique {
     input:
     file raspir_csv
     file reporting_csv
+    file growth_rate_csv
 
     output:
     stdout emit: pandascrap
@@ -113,6 +114,7 @@ process test_filenames_same {
     input:
     file raspir_csv
     file reporting_csv
+    file growth_rate_csv
 
     output:
     stdout emit: filessame
@@ -129,6 +131,7 @@ process test_filenames_same {
     """
     echo "Filename $raspir_csv"
     echo "Filename $reporting_csv"
+    echo "Filename $growth_rate_csv"
     
 
     """
