@@ -10,6 +10,11 @@ cp -R $eg_dir/reporting/haybaler/haybaler_output/*.csv reporting/haybaler/haybal
 mkdir -p raspir
 cp -R $eg_dir/raspir/*raspir_final_stats.csv raspir/
 
+mkdir -p growth_rate
+mkdir -p growth_rate/fit_results
+mkdir -p growth_rate/fit_results/output
+cp $eg_dir/growth_rate/fit_results/output/*.csv  growth_rate/fit_results/output
+
 #TODO!
 #mkdir -p krakenuniq
 #cp -R $eg_dir/raspir/*report.txt krakenuniq/

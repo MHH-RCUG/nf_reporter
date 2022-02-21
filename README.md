@@ -54,11 +54,15 @@ ideally after raspir (slow) and before haybaler
         ├── 3_sm_R1.ndp.trm.s.mm.dup.mq30.bam.txt.rep.us.csv
         ├── 4_sm_R1.ndp.trm.s.mm.dup.mq30.bam.txt.rep.us.csv
         ├── 5_sm_R1.ndp.trm.s.mm.dup.mq30.bam.txt.rep.us.csv
-        └── haybaler_output
-            ├── bacteria_per_human_cell_haybaler.csv
-            ├── bacteria_per_human_cell_haybaler.csv.filt.heatmap.csv
-            ├── bacteria_per_human_cell_haybaler_short.csv
-            ├── bacteria_per_human_cell_haybaler_short.csv.filt.heatmap.csv
-            ├── bacteria_per_human_cell_haybaler_taxa.csv
-            ├── bacteria_per_human_cell_heattree.csv
+
+.
+└── fit_results
+    └── output
+        ├── 1_sm_R1.ndp.trm.s.mm.dup.mq30.calmd_subsamples_results.csv
+        ├── 2_sm_R1.ndp.trm.s.mm.dup.mq30.calmd_subsamples_results.csv
+        ├── 3_sm_R1.ndp.trm.s.mm.dup.mq30.calmd_subsamples_results.csv
+        ├── 4_sm_R1.ndp.trm.s.mm.dup.mq30.calmd_subsamples_results.csv
+        └── 5_sm_R1.ndp.trm.s.mm.dup.mq30.calmd_subsamples_results.csv
+
+
 ```
