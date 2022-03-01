@@ -76,7 +76,7 @@ process pandas_unique {
 
     shell:
     """
-    python3 $projectDir/add_raspir.py -ra $raspir_csv -re $reporting_csv -d $projectDir
+    python3 $projectDir/join_csvs.py -ra $raspir_csv -re $reporting_csv -d $projectDir -g $growth_rate_csv
     """
 
 
