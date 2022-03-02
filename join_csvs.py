@@ -13,7 +13,7 @@ def read_csv(input_file):
 
 
 def add_raspir(raspir, df):
-    df["raspir"] = "raspir_negative"  # add raspir column to reporting
+    df["raspir"] = "raspir_neg"  # add raspir column to reporting
     # assert "positive" to raspir column if species was detected by raspir
     df.loc[df["species"].isin(raspir["Species"]), "raspir"] = "raspir_positive"
     return df

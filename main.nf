@@ -5,21 +5,20 @@ workflow {
     params.output_dir = "output"
 
     // File inputs
-    raspir_csvs = Channel.fromPath('raspir/*.csv')
-    reporting_csvs = Channel.fromPath('reporting/haybaler/*.csv')
-    growth_rate_csvs = Channel.fromPath('growth_rate/fit_results/output/*.csv')
+    raspir_csvs = Channel.fromPath('raspir/*final_stats.csv', checkIfExists: true)
+    reporting_csvs = Channel.fromPath('reporting/haybaler/*.csv', checkIfExists: true)
+    growth_rate_csvs = Channel.fromPath('growth_rate/fit_results/output/*.csv', checkIfExists: true)
     chunksize = Channel.value(1000)
 
     // run processes
-    cut_first_column(raspir_csvs, chunksize)
-    cut_first_column.out.somecrap.view()
-
+    
     // test filenames read by nextflow from raspir and reporting have the same stem -looks good
     test_filenames_same(raspir_csvs, reporting_csvs,growth_rate_csvs)
     test_filenames_same.out.filessame.view()
 
-    pandas_unique(raspir_csvs, reporting_csvs,growth_rate_csvs)
-    pandas_unique.out.pandascrap.view()    
+    // run integration step python script
+    run_integration(raspir_csvs, reporting_csvs,growth_rate_csvs)
+    run_integration.out.pandas_out.view()    
 
 
     //collect_files()
@@ -31,26 +30,9 @@ workflow {
 
 
 
-process cut_first_column {
-
-    input:
-    file x
-    val(chunksize)
-
-    output:
-    //path "$x.txt"
-    // Named stdout pipe
-    stdout emit: somecrap
-
-    shell:
-    """
-    #cut -f 1 -d"," $x | head -n 5
-    cut -f 1 -d"," $x | head -n 5 >/dev/null
-
-    """
-}
-
-process pandas_unique {
+process run_integration {
+    
+    publishDir "${params.output_dir}/", mode: 'copy', overwrite: true
     conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
 
     text = """
@@ -68,11 +50,13 @@ process pandas_unique {
     file growth_rate_csv
 
     output:
-    stdout emit: pandascrap
+    stdout emit: pandas_out
     
     //println "Filename" $raspir_csv.getBaseName()
     //println "Filename" $reporting_csv
 
+    // Use current dir as default
+    $projectDir = "."
 
     shell:
     """
@@ -90,6 +74,7 @@ process pandas_unique {
 
 
 process test_filenames_same {
+
     conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
 
     text = """
