@@ -5,6 +5,7 @@
 import click
 import pandas as pd
 import os
+import warnings
 
 
 def read_csv(input_file):
@@ -29,9 +30,11 @@ def add_growth(growth, df):
         if len(growth_species) > 0:  # check if growth rate was evaluated for species
             growth_species = growth_species[0]
             # add growth class
-            df.loc[df["species"] == species, "growth_class"] = growth.loc[growth["Name"] == growth_species, "Growth_class"].values[0]
+            df.loc[df["species"] == species, "growth_class"] = growth.loc[growth["Name"] == growth_species,
+                                                                          "Growth_class"].values[0]
             # add growth rate
-            df.loc[df["species"] == species, "growth_rate"] = growth.loc[growth["Name"] == growth_species, "Growth_Rate"].values[0]
+            df.loc[df["species"] == species, "growth_rate"] = growth.loc[growth["Name"] == growth_species,
+                                                                         "Growth_Rate"].values[0]
     return df
 
 
@@ -46,15 +49,23 @@ def save_csv(df, reporting, output_dir):
 @click.option('--output_dir', '-d', help='The directory the file should be saved in')
 @click.option('--growth_rate', '-g', help='Name of growth rate input file')
 def main(raspir, reporting, output_dir, growth_rate):
-    # check: is there always a growth_rate csv? if not: decide what to do (empty column/no column)
-    raspir_df = read_csv(raspir)
     reporting_df = read_csv(reporting)
-    growth_df = read_csv(growth_rate)
-
     working_df = reporting_df
 
-    working_df = add_raspir(raspir_df, working_df)
-    working_df = add_growth(growth_df, working_df)
+    try:
+        raspir_df = read_csv(raspir)
+        working_df = add_raspir(raspir_df, working_df)
+    except ValueError:
+        warnings.warn("WARNING: problems occurred while reading raspir file. "
+                      "Is there an input raspir file?")
+
+    try:
+        growth_df = read_csv(growth_rate)
+        working_df = add_growth(growth_df, working_df)
+    except ValueError:
+        warnings.warn("WARNING: problems occurred while reading growth file. "
+                      "Is there an input growth file?")
+
     save_csv(working_df, reporting, output_dir)
 
 
