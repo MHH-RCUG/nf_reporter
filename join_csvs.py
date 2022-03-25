@@ -50,7 +50,6 @@ def save_csv(df, reporting, output_dir):
 @click.option('--growth_rate', '-g', help='Name of growth rate input file')
 def main(raspir, reporting, output_dir, growth_rate):
     reporting_df = read_csv(reporting)
-    print(reporting_df)
     working_df = reporting_df
 
     try:
