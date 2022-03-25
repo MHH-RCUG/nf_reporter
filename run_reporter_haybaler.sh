@@ -3,7 +3,7 @@
 # Run haybaler for nf_reporter files using only bacteria matching certain requirements
 
 raspOutDir=raspir_haybaler_output
-if [[ ! -d $raspOutDir ]] # does not work yet
+if [[ ! -d $raspOutDir ]]
 then
   echo "INFO: Creating directory:" $raspOutDir
   mkdir $raspOutDir
