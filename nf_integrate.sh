@@ -1,4 +1,8 @@
-// use modern nextflow (does not allow into or create keywords)
+// Integrate multiple information sources from Wochenende_postprocess.sh
+// Eg. add growth rate and raspir results to Haybaler output.
+// Colin Davenport, Lisa Hollstein March 2022
+
+// use modern nextflow
 nextflow.enable.dsl = 2
 
 workflow {
@@ -19,6 +23,9 @@ workflow {
     // run integration step python script
     run_integration(raspir_csvs, reporting_csvs,growth_rate_csvs)
     run_integration.out.pandas_out.view()    
+
+    // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set
+    run_reporter_haybaler()
 
 
     //collect_files()
