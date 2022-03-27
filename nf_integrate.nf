@@ -25,10 +25,9 @@ workflow {
     run_integration.out.pandas_out.view()    
 
     // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set
-    run_reporter_haybaler()
+    run_reporter_haybaler(run_integration.out.nf_reporting_csv)
 
 
-    //collect_files()
 }
 
 
@@ -43,7 +42,7 @@ process run_integration {
     conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
 
     text = """
-    Run as: nextflow run main.nf
+    Run as: nextflow run nf_integrate.nf
     Requires: python pandas library - see README.md
     Read reporting and raspir files. Limit reporting rows to those rows contained in raspir output,  using pandas
     Add growth_rate data, then data from other tools.
@@ -57,6 +56,7 @@ process run_integration {
     file growth_rate_csv
 
     output:
+    nf_reporting_csv
     stdout emit: pandas_out
     
     //println "Filename" $raspir_csv.getBaseName()
@@ -73,6 +73,35 @@ process run_integration {
 
 
 }
+
+
+
+
+
+process run_reporter_hayber {
+
+    publishDir "${params.output_dir}/", mode: 'copy', overwrite: true
+    conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
+
+
+    input:
+    nf_reporting_csv
+
+    output:
+    stdout emit: pandas_out
+
+    // Use current dir as default
+    $projectDir = "."
+
+    shell:
+    """
+    bash run_reporter_haybaler.sh
+    """
+
+
+
+}
+
 
 
 
