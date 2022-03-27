@@ -4,11 +4,16 @@ Integrate metagenomic reports
 Authors: Colin Davenport, Lisa Hollstein
 
 ## Goal - metagenomic data integration: 
-- integrate multiple metagenomic reports into one table (preferably: haybaler ?)
+- integrate multiple metagenomic reports into one table.
 - So species found by raspir should be listed as "raspir_positive" or "raspir_negative" in the haybaler table (in a new column)
 - later, species found by krakenuniq and metaphlan should be treated simularly (new column in haybaler)
 - provide multiple views of this table for different stakeholders
 
+
+## How does this fit into Wochenende/Haybaler ?
+- nf_reporter should be run after Wochenende and Haybaler (i.e. using wochenende_postprocess.sh ) have been completed
+- The original Haybaler scripts don't need any more changes
+- We just refine the voluminous but unintegrated data output by wochenende_postprocess.sh to help users.
 
 
 ## Run 
@@ -36,7 +41,7 @@ python -m pip --user pandas=1.2.5
 Merging options
 
 
-ideally after raspir (slow) and before haybaler
+ideally after raspir
 
 ```
 
