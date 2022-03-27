@@ -56,7 +56,8 @@ process run_integration {
     file growth_rate_csv
 
     output:
-    nf_reporting_csv
+    path '*.nf_reporting.csv', emit: nf_reporting_csv
+    //file '*.nf_report.csv', emit: nf_reporting_csv
     stdout emit: pandas_out
     
     //println "Filename" $raspir_csv.getBaseName()
@@ -78,14 +79,14 @@ process run_integration {
 
 
 
-process run_reporter_hayber {
+process run_reporter_haybaler {
 
     publishDir "${params.output_dir}/", mode: 'copy', overwrite: true
     conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
 
 
     input:
-    nf_reporting_csv
+    file nf_reporting_csv
 
     output:
     stdout emit: pandas_out
