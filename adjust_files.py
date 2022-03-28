@@ -1,4 +1,6 @@
 # Lisa Hollstein, March 2022
+# Script to create temporary csv files only with bacteria matching certain criteria
+# Files are needed to start Haybaler for those bacteria
 
 import click
 import pandas as pd
@@ -11,10 +13,12 @@ import pandas as pd
 def main(input_file, column, growth_class):
     df = pd.read_csv(input_file)
     if column == "raspir":
+        # creating csv containing only raspir positive bacteria
         df = df[df["raspir"] == "raspir_positive"]
         df.drop(columns=["raspir", "growth_class", "growth_rate"], inplace=True, errors="ignore")
     elif column == "growth":
-        print(growth_class)
+        # creating csv containing only bacteria of specific growth classes
+        print("Selected growth. This can't be done yet")
     df.to_csv(input_file + ".rasp.csv", sep=",", index=False)
 
 

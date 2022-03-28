@@ -1,6 +1,10 @@
 #!/bin/bash
 # Lisa Hollstein, March 2022
-# Run haybaler for nf_reporter files using only bacteria matching certain requirements
+# Run Haybaler for nf_reporter files using only bacteria matching certain requirements
+
+# Requires Haybaler https://github.com/MHH-RCUG/haybaler
+# Requires Haybaler conda environment https://github.com/MHH-RCUG/haybaler#installation-via-conda
+# Requires Wochenende https://github.com/MHH-RCUG/Wochenende
 
 raspOutDir=raspir_haybaler_output
 if [[ ! -d $raspOutDir ]]
@@ -52,7 +56,6 @@ then
     rasp_input_files="$rasp_input_files;$csv"
   done
 fi
-echo $rasp_input_files
 
 
 # start Haybaler for all raspir positive bacteria
