@@ -6,6 +6,8 @@
 # Requires Haybaler conda environment https://github.com/MHH-RCUG/haybaler#installation-via-conda
 # Requires Wochenende https://github.com/MHH-RCUG/Wochenende
 
+projectDir=$1
+
 raspOutDir=raspir_haybaler_output
 if [[ ! -d $raspOutDir ]]
 then
@@ -41,7 +43,7 @@ rm -f *rasp.csv
 # create input files with only raspir_positive bacteria
 for file in *nf_reporting.csv
 do
-  python3 adjust_files.py -f $file -c "raspir"
+  python3 $projectDir/adjust_files.py -f $file -c "raspir"
 done
 
 
@@ -59,7 +61,7 @@ fi
 
 
 # start Haybaler for all raspir positive bacteria
-python3 haybaler.py -i "$rasp_input_files" -p . -op $raspOutDir -o raspir_haybaler.csv
+python3 $projectDir/haybaler.py -i "$rasp_input_files" -p . -op $raspOutDir -o raspir_haybaler.csv
 
 
 # cleanup

@@ -1,6 +1,7 @@
 # Lisa Hollstein, March 2022
 # Script to create temporary csv files only with bacteria matching certain criteria
-# Files are needed to start Haybaler for those bacteria
+# Output files are needed to start Haybaler for those bacteria
+# Input: nf_reporting.csv, criteria to select bacteria
 
 import click
 import pandas as pd
@@ -9,7 +10,7 @@ import pandas as pd
 @click.command()
 @click.option('--input_file', '-f', help='Name of file to be adjusted')
 @click.option('--column', '-c', help='Column after which data gets selected')
-@click.option('--growth_class', help='If column=growth_class select which class should be used')
+@click.option('--growth_class', '-g', help='If column=growth_class select which class should be used')
 def main(input_file, column, growth_class):
     df = pd.read_csv(input_file)
     if column == "raspir":
