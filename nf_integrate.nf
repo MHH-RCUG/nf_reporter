@@ -24,8 +24,13 @@ workflow {
     run_integration(raspir_csvs, reporting_csvs,growth_rate_csvs)
     run_integration.out.pandas_out.view()    
 
+    sleep(10)
+    nf_reporting_csvs = Channel.fromPath('*nf_reporting.csv', checkIfExists: true)
+
+
     // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set
-    run_reporter_haybaler(run_integration.out.nf_reporting_csv)
+    //run_reporter_haybaler(run_integration.out.nf_reporting_csv)
+    run_reporter_haybaler(nf_reporting_csvs)
 
 
 }
@@ -96,6 +101,7 @@ process run_reporter_haybaler {
 
     shell:
     """
+    sleep 10
     bash run_reporter_haybaler.sh
     """
 
