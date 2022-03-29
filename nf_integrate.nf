@@ -73,7 +73,7 @@ process run_integration {
 
     shell:
     """
-    python3 $projectDir/join_csvs.py -ra $raspir_csv -re $reporting_csv -d $projectDir -g $growth_rate_csv
+    python3 $projectDir/join_csvs.py -ra $raspir_csv -re $reporting_csv  -g $growth_rate_csv
     """
 
 
@@ -102,7 +102,7 @@ process run_reporter_haybaler {
     shell:
     """
     sleep 10
-    bash run_reporter_haybaler.sh
+    bash $projectDir/run_reporter_haybaler.sh $projectDir
     """
 
 
