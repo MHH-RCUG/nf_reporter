@@ -22,8 +22,8 @@ def add_raspir(raspir, df):
 
 def add_growth(growth, df):
     # add growth class and growth rate to dataframe
-    df["growth_class"] = "not_determined"
-    df["growth_rate"] = "not_determined"
+    df["growth_class"] = "no_growth_class"
+    df["growth_rate"] = "no_growth_rate"
     for species in df["species"]:
         # get name in growth for species in df (name in growth contains species name)
         growth_species = [name for name in growth["Name"] if species in name]
