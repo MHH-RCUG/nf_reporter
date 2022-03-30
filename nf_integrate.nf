@@ -25,7 +25,7 @@ workflow {
     run_integration.out.pandas_out.view()    
 
     sleep(10)
-    nf_reporting_csvs = Channel.fromPath('*nf_reporting.csv', checkIfExists: true)
+    nf_reporting_csvs = Channel.fromPath('*nf_reporting.csv', checkIfExists: true).collect()
 
 
     // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set
@@ -91,7 +91,7 @@ process run_reporter_haybaler {
 
 
     input:
-    file nf_reporting_csv
+    file nf_reporting_csvs
 
     output:
     stdout emit: pandas_out
