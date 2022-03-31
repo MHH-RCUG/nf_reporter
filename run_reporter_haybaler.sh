@@ -16,6 +16,7 @@ then
 fi
 
 # Setup config
+echo $WOCHENENDE_DIR
 source $WOCHENENDE_DIR/scripts/parse_yaml.sh
 eval $(parse_yaml $WOCHENENDE_DIR/config.yaml)
 # Setup conda and directories
@@ -61,8 +62,21 @@ fi
 
 
 # start Haybaler for all raspir positive bacteria
-python3 $projectDir/haybaler.py -i "$rasp_input_files" -p . -op $raspOutDir -o raspir_haybaler.csv
+echo "INFO: Starting Haybaler"
+python3 haybaler.py -i "$rasp_input_files" -p . -op $raspOutDir -o raspir_haybaler.csv
 
+
+# create Heatmaps ### doesn't work yet ### ### might be better to do this from the nextflow script ###
+echo "INFO: Starting heatmap creation"
+conda deactivate
+cd raspir_haybaler_output
+bash runbatch_heatmaps.sh
+
+# create Heattrees ### might be better to do this from the nextflow script ###
+conda activate haybaler
+bash run_haybaler_tax.sh
+bash run_heattrees.sh
+cd ..
 
 # cleanup
 rm *rasp.csv
