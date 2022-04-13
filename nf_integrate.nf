@@ -24,8 +24,10 @@ workflow {
     run_integration(raspir_csvs, reporting_csvs,growth_rate_csvs)
     run_integration.out.pandas_out.view()    
 
+    // This channel is ineffective, since it works on results from the first steps ... (circular argument). We need another solution
     sleep(10)
-    nf_reporting_csvs = Channel.fromPath('*nf_reporting.csv', checkIfExists: true).collect()
+    //nf_reporting_csvs = Channel.fromPath('output/*nf_reporting.csv', checkIfExists: true).collect()
+    nf_reporting_csvs = Channel.fromPath('output/*nf_reporting.csv').collect()
 
 
     // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set
