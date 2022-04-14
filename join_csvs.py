@@ -22,8 +22,8 @@ def add_raspir(raspir, df):
 
 def add_growth(growth, df):
     # add growth class and growth rate to dataframe
-    df["growth_class"] = ""
-    df["growth_rate"] = ""
+    df["growth_class"] = "no_growth_class"
+    df["growth_rate"] = "no_growth_rate"
     for species in df["species"]:
         # get name in growth for species in df (name in growth contains species name)
         growth_species = [name for name in growth["Name"] if species in name]
@@ -38,17 +38,16 @@ def add_growth(growth, df):
     return df
 
 
-def save_csv(df, reporting, output_dir):
+def save_csv(df, reporting):
     save_name = os.path.basename(reporting) + ".nf_reporting.csv"  # set save name
-    df.to_csv(output_dir + "/" + save_name, sep=",")  # save as csv
+    df.to_csv(save_name, sep=",", index=False)  # save as csv
 
 
 @click.command()
 @click.option('--raspir', '-ra', help='Name of raspir input file')
 @click.option('--reporting', '-re', help='Name of reporting input file')
-@click.option('--output_dir', '-d', help='The directory the file should be saved in')
 @click.option('--growth_rate', '-g', help='Name of growth rate input file')
-def main(raspir, reporting, output_dir, growth_rate):
+def main(raspir, reporting, growth_rate):
     reporting_df = read_csv(reporting)
     working_df = reporting_df
 
@@ -66,7 +65,7 @@ def main(raspir, reporting, output_dir, growth_rate):
         warnings.warn("WARNING: problems occurred while reading growth file. "
                       "Is there an input growth file?")
 
-    save_csv(working_df, reporting, output_dir)
+    save_csv(working_df, reporting)
 
 
 if __name__ == '__main__':

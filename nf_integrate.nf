@@ -1,4 +1,8 @@
-// use modern nextflow (does not allow into or create keywords)
+// Integrate multiple information sources from Wochenende_postprocess.sh
+// Eg. add growth rate and raspir results to Haybaler output.
+// Colin Davenport, Lisa Hollstein March 2022
+
+// use modern nextflow
 nextflow.enable.dsl = 2
 
 workflow {
@@ -20,8 +24,17 @@ workflow {
     run_integration(raspir_csvs, reporting_csvs,growth_rate_csvs)
     run_integration.out.pandas_out.view()    
 
+    // This channel is ineffective, since it works on results from the first steps ... (circular argument). We need another solution
+    sleep(10)
+    //nf_reporting_csvs = Channel.fromPath('output/*nf_reporting.csv', checkIfExists: true).collect()
+    nf_reporting_csvs = Channel.fromPath('output/*nf_reporting.csv').collect()
 
-    //collect_files()
+
+    // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set
+    //run_reporter_haybaler(run_integration.out.nf_reporting_csv)
+    run_reporter_haybaler(nf_reporting_csvs)
+
+
 }
 
 
@@ -36,7 +49,7 @@ process run_integration {
     conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
 
     text = """
-    Run as: nextflow run main.nf
+    Run as: nextflow run nf_integrate.nf
     Requires: python pandas library - see README.md
     Read reporting and raspir files. Limit reporting rows to those rows contained in raspir output,  using pandas
     Add growth_rate data, then data from other tools.
@@ -50,6 +63,8 @@ process run_integration {
     file growth_rate_csv
 
     output:
+    path '*.nf_reporting.csv', emit: nf_reporting_csv
+    //file '*.nf_report.csv', emit: nf_reporting_csv
     stdout emit: pandas_out
     
     //println "Filename" $raspir_csv.getBaseName()
@@ -60,12 +75,42 @@ process run_integration {
 
     shell:
     """
-    python3 $projectDir/join_csvs.py -ra $raspir_csv -re $reporting_csv -d $projectDir -g $growth_rate_csv
+    python3 $projectDir/join_csvs.py -ra $raspir_csv -re $reporting_csv  -g $growth_rate_csv
     """
 
 
 
 }
+
+
+
+
+
+process run_reporter_haybaler {
+
+    publishDir "${params.output_dir}/", mode: 'copy', overwrite: true
+    conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
+
+
+    input:
+    file nf_reporting_csvs
+
+    output:
+    stdout emit: pandas_out
+
+    // Use current dir as default
+    $projectDir = "."
+
+    shell:
+    """
+    sleep 10
+    bash $projectDir/run_reporter_haybaler.sh $projectDir
+    """
+
+
+
+}
+
 
 
 
