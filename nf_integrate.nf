@@ -31,6 +31,12 @@ workflow {
     // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set)
     run_reporter_haybaler(run_integration.out.nf_reporting_csv.collect())
 
+    // heatmaps
+    run_heatmap_scripts(run_reporter_haybaler.out.haybaler_csvs.flatten())
+
+    // heattrees
+    //run_heattree_scripts(run_reporter_haybaler.out.haybaler_heattree_csvs)
+
 
 }
 
@@ -93,6 +99,8 @@ process run_reporter_haybaler {
     file nf_reporting_csvs
 
     output:
+    path 'raspir_haybaler_output/*haybaler*.csv', emit: haybaler_csvs
+    path 'raspir_haybaler_output/*haybaler.csv', emit: haybaler_heattree_csvs
     stdout emit: pandas_out
 
     // Use current dir as default
@@ -103,6 +111,62 @@ process run_reporter_haybaler {
     sleep 10
     bash $projectDir/run_reporter_haybaler.sh $projectDir
     """
+
+
+
+}
+
+
+
+
+
+process run_heatmap_scripts {
+    // create heatmaps
+
+    input:
+    file heatmap_file
+
+    output:
+    //path 'top*taxa/*'
+    stdout
+
+
+    // Use current dir as default
+    $projectDir = "."
+
+    """
+    cp $projectDir/raspir_haybaler_output/runbatch_heatmaps.sh $projectDir/raspir_haybaler_output/create_heatmap.R .
+    bash runbatch_heatmaps.sh
+    """
+
+
+
+
+}
+
+
+
+
+
+process run_heattree_scripts {
+    // create heattrees
+
+    input:
+    file heattree_files
+
+    output:
+    path 'heattree_plots'
+
+    // Use current dir as default
+    $projectDir = "."
+
+    """
+    cp $projectDir/raspir_haybaler_output/run_haybaler_tax.sh $projectDir/raspir_haybaler_output/haybaler_taxonomy.py .
+    bash run_haybaler_tax.sh
+    cp $projectDir/raspir_haybaler_output/create_heattrees.R $projectDir/raspir_haybaler_output/run_heattrees.sh .
+    bash run_heattrees.sh
+    """
+
 
 
 
