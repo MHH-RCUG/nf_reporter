@@ -26,13 +26,10 @@ workflow {
 
     // This channel is ineffective, since it works on results from the first steps ... (circular argument). We need another solution
     sleep(10)
-    //nf_reporting_csvs = Channel.fromPath('output/*nf_reporting.csv', checkIfExists: true).collect()
-    nf_reporting_csvs = Channel.fromPath('output/*nf_reporting.csv').collect()
 
 
-    // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set
-    //run_reporter_haybaler(run_integration.out.nf_reporting_csv)
-    run_reporter_haybaler(nf_reporting_csvs)
+    // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set)
+    run_reporter_haybaler(run_integration.out.nf_reporting_csv.collect())
 
 
 }
