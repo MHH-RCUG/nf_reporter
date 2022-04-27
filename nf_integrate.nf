@@ -30,12 +30,15 @@ workflow {
 
     // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set)
     run_reporter_haybaler(run_integration.out.nf_reporting_csv.collect())
+    run_reporter_haybaler.out.haybaler_out.view()
 
     // heatmaps
     run_heatmap_scripts(run_reporter_haybaler.out.haybaler_csvs.flatten())
+    //run_heatmap_scripts.out.heatmap_out.view()
 
     // heattrees
-    //run_heattree_scripts(run_reporter_haybaler.out.haybaler_heattree_csvs)
+    run_heattree_scripts(run_reporter_haybaler.out.haybaler_heattree_csvs)
+    //run_heattree_scripts.out.heattree_out.view()
 
 
 }
@@ -101,7 +104,8 @@ process run_reporter_haybaler {
     output:
     path 'raspir_haybaler_output/*haybaler*.csv', emit: haybaler_csvs
     path 'raspir_haybaler_output/*haybaler.csv', emit: haybaler_heattree_csvs
-    stdout emit: pandas_out
+    path 'raspir_haybaler_output'
+    stdout emit: haybaler_out
 
     // Use current dir as default
     $projectDir = "."
@@ -121,21 +125,22 @@ process run_reporter_haybaler {
 
 
 process run_heatmap_scripts {
+    publishDir "${params.output_dir}/raspir_haybaler_output/", mode: 'copy', overwrite: true
     // create heatmaps
 
     input:
     file heatmap_file
 
     output:
-    //path 'top*taxa/*'
-    stdout
+    path 'top*taxa/*'
+    stdout emit: heatmap_out
 
 
     // Use current dir as default
     $projectDir = "."
 
     """
-    cp $projectDir/raspir_haybaler_output/runbatch_heatmaps.sh $projectDir/raspir_haybaler_output/create_heatmap.R .
+    cp $projectDir/runbatch_heatmaps.sh $projectDir/create_heatmap.R .
     bash runbatch_heatmaps.sh
     """
 
@@ -149,6 +154,7 @@ process run_heatmap_scripts {
 
 
 process run_heattree_scripts {
+    publishDir "${params.output_dir}/raspir_haybaler_output/", mode: 'copy', overwrite: true
     // create heattrees
 
     input:
@@ -156,14 +162,16 @@ process run_heattree_scripts {
 
     output:
     path 'heattree_plots'
+    path '*.csv'
+    stdout emit: heattree_out
 
     // Use current dir as default
     $projectDir = "."
 
     """
-    cp $projectDir/raspir_haybaler_output/run_haybaler_tax.sh $projectDir/raspir_haybaler_output/haybaler_taxonomy.py .
+    cp $projectDir/run_haybaler_tax.sh $projectDir/haybaler_taxonomy.py .
     bash run_haybaler_tax.sh
-    cp $projectDir/raspir_haybaler_output/create_heattrees.R $projectDir/raspir_haybaler_output/run_heattrees.sh .
+    cp $projectDir/create_heattrees.R $projectDir/run_heattrees.sh .
     bash run_heattrees.sh
     """
 

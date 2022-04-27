@@ -17,8 +17,12 @@ Authors: Colin Davenport, Lisa Hollstein
 
 
 ## Run 
-
-`nextflow run main.nf`
+## Copy all Haybaler files for heattree and heatmap creation into directory
+cp path/to/haybaler/runbatch_heatmaps.sh path/to/haybaler/create_heatmap.R .
+cp path/to/haybaler/run_haybaler_tax.sh path/to/haybaler/haybaler_taxonomy.py .
+cp path/to/haybaler/create_heattrees.R path/to/haybaler/run_heattrees.sh .
+## Run nextflow script on a server where R is installed
+`nextflow run nf_integrate.nf`
 
 ## Install
 
