@@ -32,11 +32,11 @@ workflow {
     run_reporter_haybaler(run_integration.out.nf_reporting_csv.collect())
     run_reporter_haybaler.out.haybaler_out.view()
 
-    // heatmaps
+    // Run Haybaler heatmap scripts using Haybaler output
     run_heatmap_scripts(run_reporter_haybaler.out.haybaler_csvs.flatten())
     //run_heatmap_scripts.out.heatmap_out.view()
 
-    // heattrees
+    // Run Haybaler heattree scripts using Haybaler output
     run_heattree_scripts(run_reporter_haybaler.out.haybaler_heattree_csvs)
     //run_heattree_scripts.out.heattree_out.view()
 
