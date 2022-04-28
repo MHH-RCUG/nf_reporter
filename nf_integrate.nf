@@ -133,6 +133,7 @@ process run_heatmap_scripts {
 
     output:
     path 'top*taxa/*'
+    path '*filt.heatmap.csv'
     stdout emit: heatmap_out
 
 
