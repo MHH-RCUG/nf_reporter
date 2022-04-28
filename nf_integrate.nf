@@ -24,9 +24,7 @@ workflow {
     run_integration(raspir_csvs, reporting_csvs,growth_rate_csvs)
     run_integration.out.pandas_out.view()    
 
-    // This channel is ineffective, since it works on results from the first steps ... (circular argument). We need another solution
     sleep(10)
-
 
     // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set)
     run_reporter_haybaler(run_integration.out.nf_reporting_csv.collect())
@@ -50,6 +48,7 @@ workflow {
 
 
 process run_integration {
+    //executor = "slurm"
     
     publishDir "${params.output_dir}/", mode: 'copy', overwrite: true
     conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
@@ -93,6 +92,7 @@ process run_integration {
 
 
 process run_reporter_haybaler {
+    //executor = "slurm"
 
     publishDir "${params.output_dir}/", mode: 'copy', overwrite: true
     conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
