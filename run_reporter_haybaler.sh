@@ -23,13 +23,9 @@ eval $(parse_yaml $WOCHENENDE_DIR/config.yaml)
 . $CONDA_SH_PATH
 conda activate $HAYBALER_CONDA_ENV_NAME
 
-cp $HAYBALER_DIR/*.py $raspOutDir
+cp $HAYBALER_DIR/haybaler.py $raspOutDir
+cp $HAYBALER_DIR/csv_to_xlsx_converter.py $raspOutDir
 cp $HAYBALER_DIR/haybaler.py .
-cp $HAYBALER_DIR/runbatch_heatmaps.sh $raspOutDir
-cp $HAYBALER_DIR/create_heatmap.R $raspOutDir
-cp $HAYBALER_DIR/run_heattrees.sh $raspOutDir
-cp $HAYBALER_DIR/create_heattrees.R $raspOutDir
-cp $HAYBALER_DIR/run_haybaler_tax.sh $raspOutDir
 
 # cleanup possible old haybaler runs
 count=$(ls -1 $raspOutDir/*haybaler.csv 2>/dev/null | wc -l)
@@ -64,6 +60,7 @@ fi
 # start Haybaler for all raspir positive bacteria
 echo "INFO: Starting Haybaler"
 python3 haybaler.py -i "$rasp_input_files" -p . -op $raspOutDir -o raspir_haybaler.csv
+echo "INFO: Finished Haybaler"
 
 
 # cleanup
