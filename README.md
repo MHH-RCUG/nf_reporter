@@ -18,7 +18,9 @@ Authors: Colin Davenport, Lisa Hollstein
 
 ## Run 
 
-`nextflow run main.nf`
+Run nextflow script on a server where R is installed
+
+`nextflow run nf_integrate.nf`
 
 ## Install
 

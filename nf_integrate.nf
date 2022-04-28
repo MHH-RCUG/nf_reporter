@@ -24,15 +24,19 @@ workflow {
     run_integration(raspir_csvs, reporting_csvs,growth_rate_csvs)
     run_integration.out.pandas_out.view()    
 
-    // This channel is ineffective, since it works on results from the first steps ... (circular argument). We need another solution
     sleep(10)
-    //nf_reporting_csvs = Channel.fromPath('output/*nf_reporting.csv', checkIfExists: true).collect()
-    nf_reporting_csvs = Channel.fromPath('output/*nf_reporting.csv').collect()
 
+    // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set)
+    run_reporter_haybaler(run_integration.out.nf_reporting_csv.collect())
+    run_reporter_haybaler.out.haybaler_out.view()
 
-    // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set
-    //run_reporter_haybaler(run_integration.out.nf_reporting_csv)
-    run_reporter_haybaler(nf_reporting_csvs)
+    // Run Haybaler heatmap scripts using Haybaler output
+    run_heatmap_scripts(run_reporter_haybaler.out.haybaler_csvs.flatten())
+    //run_heatmap_scripts.out.heatmap_out.view()
+
+    // Run Haybaler heattree scripts using Haybaler output
+    run_heattree_scripts(run_reporter_haybaler.out.haybaler_heattree_csvs)
+    //run_heattree_scripts.out.heattree_out.view()
 
 
 }
@@ -44,6 +48,7 @@ workflow {
 
 
 process run_integration {
+    //executor = "slurm"
     
     publishDir "${params.output_dir}/", mode: 'copy', overwrite: true
     conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
@@ -87,6 +92,7 @@ process run_integration {
 
 
 process run_reporter_haybaler {
+    //executor = "slurm"
 
     publishDir "${params.output_dir}/", mode: 'copy', overwrite: true
     conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
@@ -96,7 +102,10 @@ process run_reporter_haybaler {
     file nf_reporting_csvs
 
     output:
-    stdout emit: pandas_out
+    path 'raspir_haybaler_output/*haybaler*.csv', emit: haybaler_csvs
+    path 'raspir_haybaler_output/*haybaler.csv', emit: haybaler_heattree_csvs
+    path 'raspir_haybaler_output'
+    stdout emit: haybaler_out
 
     // Use current dir as default
     $projectDir = "."
@@ -106,6 +115,67 @@ process run_reporter_haybaler {
     sleep 10
     bash $projectDir/run_reporter_haybaler.sh $projectDir
     """
+
+
+
+}
+
+
+
+
+
+process run_heatmap_scripts {
+    publishDir "${params.output_dir}/raspir_haybaler_output/", mode: 'copy', overwrite: true
+    // create heatmaps
+
+    input:
+    file heatmap_file
+
+    output:
+    path 'top*taxa/*'
+    path '*filt.heatmap.csv'
+    stdout emit: heatmap_out
+
+
+    // Use current dir as default
+    $projectDir = "."
+
+    """
+    cp $projectDir/runbatch_heatmaps.sh $projectDir/create_heatmap.R .
+    bash runbatch_heatmaps.sh
+    """
+
+
+
+
+}
+
+
+
+
+
+process run_heattree_scripts {
+    publishDir "${params.output_dir}/raspir_haybaler_output/", mode: 'copy', overwrite: true
+    // create heattrees
+
+    input:
+    file heattree_files
+
+    output:
+    path 'heattree_plots'
+    path '*.csv'
+    stdout emit: heattree_out
+
+    // Use current dir as default
+    $projectDir = "."
+
+    """
+    cp $projectDir/run_haybaler_tax.sh $projectDir/haybaler_taxonomy.py .
+    bash run_haybaler_tax.sh
+    cp $projectDir/create_heattrees.R $projectDir/run_heattrees.sh .
+    bash run_heattrees.sh
+    """
+
 
 
 
