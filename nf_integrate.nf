@@ -12,30 +12,31 @@ workflow {
     raspir_csvs = Channel.fromPath('raspir/*final_stats.csv', checkIfExists: true)
     reporting_csvs = Channel.fromPath('reporting/haybaler/*.csv', checkIfExists: true)
     growth_rate_csvs = Channel.fromPath('growth_rate/fit_results/output/*.csv', checkIfExists: true)
+    kraken = Channel.fromPath('de/fe*', checkIfExists: false)
     chunksize = Channel.value(1000)
 
     // run processes
     
     // test filenames read by nextflow from raspir and reporting have the same stem -looks good
-    test_filenames_same(raspir_csvs, reporting_csvs,growth_rate_csvs)
-    test_filenames_same.out.filessame.view()
+    //test_filenames_same(raspir_csvs, reporting_csvs, growth_rate_csvs, kraken)
+    //test_filenames_same.out.filessame.view()
 
     // run integration step python script
-    run_integration(raspir_csvs, reporting_csvs,growth_rate_csvs)
-    run_integration.out.pandas_out.view()    
+    run_integration(reporting_csvs)
+    //run_integration.out.pandas_out.view()
 
     sleep(10)
 
     // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set)
-    run_reporter_haybaler(run_integration.out.nf_reporting_csv.collect())
-    run_reporter_haybaler.out.haybaler_out.view()
+    //run_reporter_haybaler(run_integration.out.nf_reporting_csv.collect())
+    //run_reporter_haybaler.out.haybaler_out.view()
 
     // Run Haybaler heatmap scripts using Haybaler output
-    run_heatmap_scripts(run_reporter_haybaler.out.haybaler_csvs.flatten())
-    //run_heatmap_scripts.out.heatmap_out.view()
+    //run_heatmap_scripts(run_reporter_haybaler.out.haybaler_csvs.flatten())
+    // run_heatmap_scripts.out.heatmap_out.view()
 
     // Run Haybaler heattree scripts using Haybaler output
-    run_heattree_scripts(run_reporter_haybaler.out.haybaler_heattree_csvs)
+    //run_heattree_scripts(run_reporter_haybaler.out.haybaler_heattree_csvs)
     //run_heattree_scripts.out.heattree_out.view()
 
 
@@ -63,12 +64,10 @@ process run_integration {
 
 
     input:
-    file raspir_csv
     file reporting_csv
-    file growth_rate_csv
 
     output:
-    path '*.nf_reporting.csv', emit: nf_reporting_csv
+    //path '*.nf_reporting.csv', emit: nf_reporting_csv
     //file '*.nf_report.csv', emit: nf_reporting_csv
     stdout emit: pandas_out
     
@@ -78,10 +77,18 @@ process run_integration {
     // Use current dir as default
     $projectDir = "."
 
-    shell:
+    script:
+
+    //name = reporting_csv
+
+    //String[] array
+    name = reporting_csv.getSimpleName()
+    println name
     """
-    python3 $projectDir/join_csvs.py -ra $raspir_csv -re $reporting_csv  -g $growth_rate_csv
+    ln -s ${launchDir}/kraken/$name* .
+    #blA
     """
+    /*python3 $projectDir/join_csvs.py -ra $raspir_csv -re $reporting_csv  -g $growth_rate_csv*/
 
 
 
@@ -202,6 +209,7 @@ process test_filenames_same {
     file raspir_csv
     file reporting_csv
     file growth_rate_csv
+    file kraken
 
     output:
     stdout emit: filessame

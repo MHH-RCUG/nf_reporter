@@ -1,4 +1,4 @@
-# Lisa Hollstein, March 2022
+# Lisa Hollstein, March-April 2022
 # Script to create temporary csv files only with bacteria matching certain criteria
 # Output files are needed to start Haybaler for those bacteria
 # Input: nf_reporting.csv, criteria to select bacteria
@@ -16,7 +16,8 @@ def main(input_file, column, growth_class):
     if column == "raspir":
         # creating csv containing only raspir positive bacteria
         df = df[df["raspir"] == "raspir_positive"]
-        df.drop(columns=["raspir", "growth_class", "growth_rate"], inplace=True, errors="ignore")
+        df.drop(columns=["raspir", "growth_class", "growth_rate", "krakenuniq_reads", "species_kraken"],
+                inplace=True, errors="ignore")
     elif column == "growth":
         # creating csv containing only bacteria of specific growth classes
         print("Selected growth. This can't be done yet")
