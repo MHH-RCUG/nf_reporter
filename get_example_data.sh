@@ -2,6 +2,7 @@
 # copy example data (added to .gitignore)
 
 eg_dir="/ngsssd1/rcug/wochenende_test/CF_small"
+kraken_eg_dir="/ngsssd1/rcug/lisa/test_data"
 
 mkdir -p reporting reporting/haybaler reporting/haybaler/haybaler_output/
 cp -R $eg_dir/reporting/haybaler/*.csv reporting/haybaler/
@@ -14,6 +15,9 @@ mkdir -p growth_rate
 mkdir -p growth_rate/fit_results
 mkdir -p growth_rate/fit_results/output
 cp $eg_dir/growth_rate/fit_results/output/*.csv  growth_rate/fit_results/output
+
+mkdir -p kraken
+cp $kraken_eg_dir/kraken/*species.filt.txt kraken
 
 #TODO!
 #mkdir -p krakenuniq
