@@ -17,7 +17,7 @@ mkdir -p growth_rate/fit_results/output
 cp $eg_dir/growth_rate/fit_results/output/*.csv  growth_rate/fit_results/output
 
 mkdir -p kraken
-cp $kraken_eg_dir/kraken/*species.filt.txt kraken
+cp $kraken_eg_dir/kraken/*report.txt kraken
 
 #TODO!
 #mkdir -p krakenuniq
