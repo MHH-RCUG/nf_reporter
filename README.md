@@ -1,7 +1,7 @@
 # nf_reporter
 Integrate metagenomic reports
 
-Authors: Colin Davenport, Lisa Hollstein
+Authors: Colin Davenport, Lisa Hollstein, Janno Peilert
 
 ## Goal - metagenomic data integration: 
 - integrate multiple metagenomic reports into one table.
