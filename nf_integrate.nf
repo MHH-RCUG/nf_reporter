@@ -1,6 +1,8 @@
 // Integrate multiple information sources from Wochenende_postprocess.sh
 // Eg. add growth rate and raspir results to Haybaler output.
-// Colin Davenport, Lisa Hollstein March 2022
+// Colin Davenport March - April 2022
+// Lisa Hollstein March - August 2022
+// Janno Peilert August 2022
 
 // use modern nextflow
 nextflow.enable.dsl = 2

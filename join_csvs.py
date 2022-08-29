@@ -1,5 +1,6 @@
 # Script to combine reporting, growth_rate and raspir output
-# Lisa Hollstein, Feb-April 2022
+# Lisa Hollstein, Feb-Aug 2022
+# Janno Peilert, Aug 2022
 
 
 import click
