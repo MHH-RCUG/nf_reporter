@@ -15,6 +15,13 @@ then
   mkdir $raspOutDir
 fi
 
+krkOutDir=kraken_haybaler_output
+if [[ ! -d $krkOutDir ]]
+then
+  echo "INFO: Creating directory:" $krkOutDir
+  mkdir $krkOutDir
+fi
+
 # Setup config
 echo $WOCHENENDE_DIR
 source $WOCHENENDE_DIR/scripts/parse_yaml.sh
@@ -35,6 +42,7 @@ then
 fi
 rm -f excluded_taxa.csv
 rm -f *rasp.csv
+rm -f *krk.csv
 
 
 # create input files with only raspir_positive bacteria
@@ -58,13 +66,36 @@ fi
 
 
 # start Haybaler for all raspir positive bacteria
-echo "INFO: Starting Haybaler"
+echo "INFO: Starting raspir Haybaler"
 python3 haybaler.py -i "$rasp_input_files" -p . -op $raspOutDir -o raspir_haybaler.csv
-echo "INFO: Finished Haybaler"
+echo "INFO: Finished raspir Haybaler"
 
 
-# cleanup
-rm *rasp.csv
+
+# create input files with only bacteria detected by Wochenende AND kraken
+for file in *nf_reporting.csv
+do
+  python3 $projectDir/adjust_files.py -f $file -c "kraken"
+done
+
+
+krk_input_files=""
+# run for all *krk.csv in directory
+count=$(ls -1 *krk.csv 2>/dev/null | wc -l)
+if [[ count != 0 ]]
+then
+  for csv in *rasp.csv
+  do
+    krk_input_files="$krk_input_files;$csv"
+  done
+fi
+
+
+# start Haybaler for all Wochenende AND kraken detected bacteria
+echo "INFO: Starting kraken Haybaler"
+python3 haybaler.py -i "$krk_input_files" -p . -op $krkOutDir -o kraken_haybaler.csv
+echo "INFO: Finished kraken Haybaler"
+
 
 # Move log file into log directory
 mkdir -p $raspOutDir/logs
