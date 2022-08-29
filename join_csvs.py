@@ -49,10 +49,10 @@ def extract_species_name(df):
                 # The first word starts with a capital letter
                 first_letter = ord(split_name[n][0])  # must be a capital letter
                 second_letter = ord(split_name[n][1])  # must be a lowercase letter
-                second_first = ord(split_name[n+1][0])  # must be a lowercase letter
+                second_first = ord(split_name[n + 1][0])  # must be a lowercase letter
                 # Unicode value of lowercase letters is between 97 and 122, for capital letters it is between 65 and 90
                 if 64 < first_letter < 91 and 96 < second_letter < 123 and 96 < second_first < 123:
-                    new_name = split_name[n] + " " + split_name[n+1]
+                    new_name = split_name[n] + " " + split_name[n + 1]
                     # add extracted species name
                     df.loc[df["species"] == row, "species_kraken"] = new_name
                     break
@@ -63,18 +63,38 @@ def extract_species_name(df):
 
 def add_kraken(kraken_df, df):
     kraken_df = kraken_df[kraken_df["rank"] == "species"]
+
+    #create new columns
     df["krakenuniq_reads"] = "not_in_kraken"
+    df["krakenuniq_%"] = "not_in_kraken"
+    df["krakenuniq_taxReads"] = "not_in_kraken"
+
+    # sorts rows with reads less then 20 out
+    # TODO 20 in variable
+    kraken_df = kraken_df.drop(kraken_df[kraken_df.reads < 20].index)
+
+    #checks if species found in Wochenende were found by kraken
     for species_k in kraken_df["taxName"]:
+        # clears whitespaces
         species = species_k.lstrip(" ")
-        if species in df["species_kraken"].values:
+
+        if (species in df["species_kraken"].values):
             df.loc[df["species_kraken"] == species, "krakenuniq_reads"] = kraken_df.loc[
                 kraken_df["taxName"] == species_k, "reads"].values[0]
+            
         else:
             df.loc[df.shape[0]] = "not_in_we"
             df.loc[df.index[-1], "species_kraken"] = species
             df.loc[df.index[-1], "krakenuniq_reads"] = kraken_df.loc[
                 kraken_df["taxName"] == species_k, "reads"].values[0]
-    print(df)
+
+        #select columns from krakentable
+        df.loc[df["species_kraken"] == species, "krakenuniq_%"] = kraken_df.loc[
+            kraken_df["taxName"] == species_k, "%"].values[0]
+        df.loc[df["species_kraken"] == species, "krakenuniq_taxReads"] = kraken_df.loc[
+            kraken_df["taxName"] == species_k, "taxReads"].values[0]
+
+    #print(df)
     return df
 
 
@@ -88,6 +108,7 @@ def save_csv(df, reporting):
 @click.option('--reporting', '-re', help='Name of reporting input file')
 @click.option('--growth_rate', '-g', help='Name of growth rate input file')
 @click.option('--kraken', '-k', help='Name of kraken input file')
+
 def main(raspir, reporting, growth_rate, kraken):
     reporting_df = read_csv(reporting)
     all_df = reporting_df
@@ -107,13 +128,14 @@ def main(raspir, reporting, growth_rate, kraken):
                       "Is there an input growth file?")
 
     try:
-        kraken_df = pd.read_csv(kraken, sep="\t")
+        kraken_df = pd.read_csv(kraken, sep="\t", skiprows=3)
         all_df = extract_species_name(all_df)
         all_df = add_kraken(kraken_df, all_df)
     except ValueError:
         print("INFO: No kraken file found for", reporting, "or error during adding of kraken information")
 
     save_csv(all_df, reporting)
+    #print(all_df)
 
 
 if __name__ == '__main__':
