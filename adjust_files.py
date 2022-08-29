@@ -17,7 +17,7 @@ def main(input_file, column, growth_class):
     if column == "raspir":
         # creating csv containing only raspir positive bacteria
         df = df[df["raspir"] == "raspir_positive"]
-        df.drop(columns=["raspir", "growth_class", "growth_rate", "krakenuniq_reads", "species_kraken"],
+        df.drop(columns=["raspir", "growth_class", "growth_rate", "krakenuniq_reads", "species_kraken","krakenuniq_reads", "krakenuniq_%", "krakenuniq_taxReads"],
                 inplace=True, errors="ignore")
     elif column == "growth":
         # creating csv containing only bacteria of specific growth classes
