@@ -79,17 +79,14 @@ def add_kraken(kraken_df, df):
         # clears whitespaces
         species = species_k.lstrip(" ")
 
-        if (species in df["species_kraken"].values):
-            df.loc[df["species_kraken"] == species, "krakenuniq_reads"] = kraken_df.loc[
-                kraken_df["taxName"] == species_k, "reads"].values[0]
-            
-        else:
+        # add new species to df
+        if (species not in df["species_kraken"].values):
             df.loc[df.shape[0]] = "not_in_we"
             df.loc[df.index[-1], "species_kraken"] = species
-            df.loc[df.index[-1], "krakenuniq_reads"] = kraken_df.loc[
-                kraken_df["taxName"] == species_k, "reads"].values[0]
 
         #select columns from krakentable
+        df.loc[df["species_kraken"] == species, "krakenuniq_reads"] = kraken_df.loc[
+            kraken_df["taxName"] == species_k, "reads"].values[0]
         df.loc[df["species_kraken"] == species, "krakenuniq_%"] = kraken_df.loc[
             kraken_df["taxName"] == species_k, "%"].values[0]
         df.loc[df["species_kraken"] == species, "krakenuniq_taxReads"] = kraken_df.loc[
