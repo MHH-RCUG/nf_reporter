@@ -7,6 +7,7 @@
 # Requires Wochenende https://github.com/MHH-RCUG/Wochenende
 
 projectDir=$1
+use_kraken=$2
 
 raspOutDir=raspir_haybaler_output
 if [[ ! -d $raspOutDir ]]
@@ -73,28 +74,31 @@ echo "INFO: Finished raspir Haybaler"
 
 
 # create input files with only bacteria detected by Wochenende AND kraken
-for file in *nf_reporting.csv
-do
-  python3 $projectDir/adjust_files.py -f $file -c "kraken"
-done
-
-
-krk_input_files=""
-# run for all *krk.csv in directory
-count=$(ls -1 *krk.csv 2>/dev/null | wc -l)
-if [[ count != 0 ]]
+if [[ $use_kraken == true ]]
 then
-  for csv in *rasp.csv
+  for file in *nf_reporting.csv
   do
-    krk_input_files="$krk_input_files;$csv"
+   python3 $projectDir/adjust_files.py -f $file -c "kraken"
   done
+
+
+  krk_input_files=""
+  # run for all *krk.csv in directory
+  count=$(ls -1 *krk.csv 2>/dev/null | wc -l)
+  if [[ count != 0 ]]
+  then
+    for csv in *krk.csv
+    do
+      krk_input_files="$krk_input_files;$csv"
+    done
+  fi
+
+
+  # start Haybaler for all Wochenende AND kraken detected bacteria
+  echo "INFO: Starting kraken Haybaler"
+  python3 haybaler.py -i "$krk_input_files" -p . -op $krkOutDir -o kraken_haybaler.csv
+  echo "INFO: Finished kraken Haybaler"
 fi
-
-
-# start Haybaler for all Wochenende AND kraken detected bacteria
-echo "INFO: Starting kraken Haybaler"
-python3 haybaler.py -i "$krk_input_files" -p . -op $krkOutDir -o kraken_haybaler.csv
-echo "INFO: Finished kraken Haybaler"
 
 
 # Move log file into log directory
