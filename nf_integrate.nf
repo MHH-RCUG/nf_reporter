@@ -7,6 +7,12 @@
 // use modern nextflow
 nextflow.enable.dsl = 2
 
+//choose which directories to use
+    use_kraken = false
+    use_raspir = false
+    use_growth_rate = true
+
+
 workflow {
     params.output_dir = "output"
 
@@ -22,22 +28,28 @@ workflow {
 
     // run integration step python script
     run_integration(reporting_csvs)
-    //run_integration.out.pandas_out.view()
+    run_integration.out.pandas_out.view()
 
     sleep(10)
 
+
     // Rerun a modified Haybaler script. Env variable $HAYBALER_DIR must be set)
-    //run_reporter_haybaler(run_integration.out.nf_reporting_csv.collect())
-    //run_reporter_haybaler.out.haybaler_out.view()
+    run_reporter_haybaler(run_integration.out.nf_reporting_csv.collect())
+    run_reporter_haybaler.out.haybaler_out.view()
 
     // Run Haybaler heatmap scripts using Haybaler output
-    //run_heatmap_scripts(run_reporter_haybaler.out.haybaler_csvs.flatten())
-    // run_heatmap_scripts.out.heatmap_out.view()
+    run_heatmap_scripts(run_reporter_haybaler.out.haybaler_csvs.flatten())
+    run_heatmap_scripts.out.heatmap_out.view()
 
     // Run Haybaler heattree scripts using Haybaler output
-    //run_heattree_scripts(run_reporter_haybaler.out.haybaler_heattree_csvs)
-    //run_heattree_scripts.out.heattree_out.view()
+    run_heattree_scripts(run_reporter_haybaler.out.haybaler_heattree_csvs)
+    run_heattree_scripts.out.heattree_out.view()
 
+    /*
+    TODO add kraken instead of raspir
+    run_heattree_scripts(run_reporter_haybaler.out.haybaler_heattree_csvs)
+    run_heattree_scripts.out.heattree_out.view()
+    */
 
 }
 
@@ -66,12 +78,10 @@ process run_integration {
     file reporting_csv
 
     output:
-    //path '*.nf_reporting.csv', emit: nf_reporting_csv
-    //file '*.nf_report.csv', emit: nf_reporting_csv
+    path '*.nf_reporting.csv', emit: nf_reporting_csv
     stdout emit: pandas_out
     
     //println "Filename" $raspir_csv.getBaseName()
-    //println "Filename" $reporting_csv
 
     // Use current dir as default
     $projectDir = "."
@@ -86,21 +96,29 @@ process run_integration {
 
 
 
-    //choose which directories to use
-    use_kraken = true
-    use_raspir = true
-    use_growth_rate = true
 
+
+    //variables for filenames
     kraken_file_name = ""
     raspir_file_name = ""
     growth_rate_file_name = ""
 
-    if (use_kraken) {
+    //variables for next script
+    param_re=" -re $reporting_csv "
+    param_ra=""
+    param_g=""
+    param_k=""
+
+    if (use_kraken=true) {
         kraken_file_name = name + ".fastq.report.txt"}
-    if (use_raspir) {
+        param_k="-k $kraken_file_name "
+    if (use_raspir=true) {
         raspir_file_name = name + ".ndp.trm.s.mm.dup.mq30.raspir_final_stats.csv"}
-    if (use_growth_rate) {
+        param_ra=" -ra $raspir_file_name "
+    if (use_growth_rate=true) {
         growth_rate_file_name = name + ".ndp.trm.s.mm.dup.mq30.calmd_subsamples_results.csv"}
+        param_g=" -g $growth_rate_file_name "
+
 
 
     """
@@ -108,9 +126,8 @@ process run_integration {
     then
         ln -s ${launchDir}/kraken/$name*report.txt .
         #echo $kraken_file_name
-        #head -n 2 ${launchDir}/kraken/$kraken_file_name > output-file.txt
 
-        #echo "Used kraken"
+
     fi
 
     if $use_raspir
@@ -131,8 +148,7 @@ process run_integration {
     fi
 
 
-    python3 $projectDir/join_csvs.py -ra $raspir_file_name -re $reporting_csv  -g $growth_rate_file_name -k $kraken_file_name
-
+    python3 $projectDir/join_csvs.py $param_ra $param_re $param_g $param_k
     """
 
 
@@ -154,6 +170,7 @@ process run_reporter_haybaler {
     file nf_reporting_csvs
 
     output:
+    //TODO: Add kraken output
     path 'raspir_haybaler_output/*haybaler*.csv', emit: haybaler_csvs
     path 'raspir_haybaler_output/*haybaler.csv', emit: haybaler_heattree_csvs
     path 'raspir_haybaler_output'
@@ -162,10 +179,10 @@ process run_reporter_haybaler {
     // Use current dir as default
     $projectDir = "."
 
-    shell:
+    script:
     """
     sleep 10
-    bash $projectDir/run_reporter_haybaler.sh $projectDir
+    bash $projectDir/run_reporter_haybaler.sh $projectDir $use_kraken
     """
 
 
