@@ -194,6 +194,7 @@ process run_reporter_haybaler {
 
 
 process run_heatmap_scripts {
+    executor = "local"
     publishDir "${params.output_dir}/raspir_haybaler_output/", mode: 'copy', overwrite: true
     // create heatmaps
 
@@ -224,6 +225,7 @@ process run_heatmap_scripts {
 
 
 process run_heattree_scripts {
+executor = "local"
     publishDir "${params.output_dir}/raspir_haybaler_output/", mode: 'copy', overwrite: true
     // create heattrees
 
