@@ -163,7 +163,8 @@ process run_reporter_haybaler {
     //executor = "slurm"
 
     publishDir "${params.output_dir}/", mode: 'copy', overwrite: true
-    conda '/mnt/ngsnfs/tools/miniconda3/envs/haybaler'
+
+    conda params.conda_haybaler
 
 
     input:
@@ -225,9 +226,11 @@ process run_heatmap_scripts {
 
 
 process run_heattree_scripts {
-executor = "local"
+    executor = "local"
     publishDir "${params.output_dir}/raspir_haybaler_output/", mode: 'copy', overwrite: true
     // create heattrees
+
+    conda params.conda_haybaler
 
     input:
     file heattree_files
