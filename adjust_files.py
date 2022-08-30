@@ -23,7 +23,12 @@ def main(input_file, column, growth_class):
         df.to_csv(input_file + ".rasp.csv", sep=",", index=False)
     elif column == "growth":
         # creating csv containing only bacteria of specific growth classes
-        print("Selected growth. This can't be done yet")
+        #print("Selected growth. This can't be done yet")
+        df = df[df.growth_class == growth_class]
+        df.drop(columns=["raspir",  "growth_rate", "krakenuniq_reads", "species_kraken",
+                         "krakenuniq_reads", "krakenuniq_%", "krakenuniq_taxReads"],
+                inplace=True, errors="ignore")
+        df.to_csv(input_file + ".rasp.csv", sep=",", index=False)
     elif column == "kraken":
         # creating csv containing only bacteria that were detected by Wochenende AND Kraken
         df = df[df["krakenuniq_reads"] != "not_in_kraken"]
